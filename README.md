@@ -4,8 +4,8 @@
 
 var EncryptedMessage = new classGost2814789('<ключ шифрования>'); // Инициализация (ключ шифрования 8 символов)
 
-var encrStr = EncryptedMessage.crypt('Привет Мир!','encrypt'),'encrypt');                       // Зашифрование
+var encrStr = EncryptedMessage.crypt('Привет Мир!','encrypt'); // Зашифрование
 
-var authStr = EncryptedMessage.crypt('авторизация','encrypt'),'authcode');                     // Выработка имитовставки
+var authStr = EncryptedMessage.crypt('авторизация','authcode'); // Выработка имитовставки
 
 var decStr = EncryptedMessage.crypt(EncryptedMessage.crypt('Привет Мир!','encrypt'),'decrypt'); // Зашифрование - расшифрование
