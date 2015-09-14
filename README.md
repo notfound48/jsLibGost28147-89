@@ -1,11 +1,16 @@
 # libGost28147-89.js
 
-Библиотека реализует шифрование открытого текста алгоритмом ГОСТ 28147-89 в режиме простой замены
+Библиотека реализует шифрование текста в формате unicode
+алгоритмом ГОСТ 28147-89 в режиме простой замены
 
-var EncryptedMessage = new classGost2814789('<ключ шифрования>'); // Инициализация (ключ шифрования 8 символов)
+# Инициализация (ключ шифрования 8 символов)
+var EncryptedMessage = new classGost2814789('<ключ шифрования>'); 
 
-var encrStr = EncryptedMessage.crypt('Привет Мир!','encrypt'); // Зашифрование
+# Зашифрование
+var encrStr = EncryptedMessage.crypt('Привет Мир!','encrypt');
 
-var authStr = EncryptedMessage.crypt('авторизация','authcode'); // Выработка имитовставки
+# Выработка имитовставки
+var authStr = EncryptedMessage.crypt('авторизация','authcode'); 
 
-var decStr = EncryptedMessage.crypt(EncryptedMessage.crypt('Привет Мир!','encrypt'),'decrypt'); // Зашифрование - расшифрование
+# Геттер-сеттер ключа шифрования
+EncryptedMessage.encryptionKey(key); 
