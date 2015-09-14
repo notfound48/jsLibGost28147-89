@@ -1,7 +1,22 @@
+"use strict"
+
+/**
+ * Класс реализует алгоритм блочного шифрования текста в формате unicode
+ * по ГОСТ 28147-89 в режиме простой замены
+ * @param {string} encryptionKey Ключ зашифрования/Расшифрования
+ */
 function classGost2814789(encryptionKey) {
 
+    if (encryptionKey.length != 8){
+
+        throw new Error("Encryption key length must be 8 unicode chars");
+
+    }
+
+    var cryptoKey = encryptionKey;
+
     /*  Таблица замен */
-    var exchangeTable = [
+    var EXCHANGE_TABLE = [
         {0: '9', 1: '6', 2: '3', 3: '2', 4: '8', 5: 'b', 6: '1', 7: '7', 8: 'a', 9: '4', a: 'e', b: 'f', c: 'c', d: '0', e: 'd', f: '5'},
         {0: '3', 1: '7', 2: 'e', 3: '9', 4: '8', 5: 'a', 6: 'f', 7: '0', 8: '5', 9: '2', a: '6', b: 'c', c: 'b', d: '4', e: 'd', f: '1'},
         {0: 'e', 1: '4', 2: '6', 3: '2', 4: 'b', 5: '3', 6: 'd', 7: '8', 8: 'c', 9: 'f', a: '5', b: 'a', c: '0', d: '7', e: '1', f: '9'},
@@ -18,12 +33,18 @@ function classGost2814789(encryptionKey) {
      * decrypt расшифрование
      * authcode выработка имитовставки
      * */
-    var keyModes = {
+    var KEY_MODES = {
         encrypt:    [0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0],
         decrypt:    [0, 1, 2, 3, 4, 5, 6, 7, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0, 7, 6, 5, 4, 3, 2, 1, 0],
         authcode:   [0, 1, 2, 3, 4, 5, 6, 7]
     };
 
+    /**
+     * Метод блочного шифрования в режиме простой замены
+     * @param {string} text Открытый текст/Шифр
+     * @param {string} keyMode Режим работы ключа encrypt/decrypt/authcode
+     * @returns {string}
+     */
     this.crypt = function (text, keyMode) {
 
         var xorResult = '';
@@ -31,9 +52,9 @@ function classGost2814789(encryptionKey) {
 
         splitIntoBlocks(text).forEach(function (block) {
 
-            keyModes[keyMode].forEach(function (k) {
+            KEY_MODES[keyMode].forEach(function (k) {
 
-                xorResult = CicleLeftShift(exchangeChars(mod2_32(block[1].charCodeAt(0), encryptionKey.charCodeAt(k))), 11) ^ block[0].charCodeAt(0);
+                xorResult = CicleLeftShift(exchangeChars(mod2_32(block[1].charCodeAt(0), cryptoKey.charCodeAt(k))), 11) ^ block[0].charCodeAt(0);
 
                 block.reverse();
 
@@ -50,9 +71,27 @@ function classGost2814789(encryptionKey) {
     };
 
     /**
+     * Геттер-сеттер ключа шифрования
+     * @param {string} encryptionKey
+     */
+    this.encryptionKey = function(encryptionKey){
+
+        if (!arguments.length) return cryptoKey;
+
+        if (encryptionKey.length != 8){
+
+            throw new Error("Encryption key length must be 8 unicode chars");
+
+        }
+
+        cryptoKey = encryptionKey;
+
+    };
+
+    /**
      * Разделяет входящую строку на блоки по 2 символа (32*2 = 64 бит)
      * Если в строке нечетное количетсов символов, то дописывает в конец пробел
-     * @param text
+     * @param {string} text
      * @returns {Array}
      */
     function splitIntoBlocks(text) {
@@ -69,7 +108,7 @@ function classGost2814789(encryptionKey) {
      * Реализует сложение по модулю 32
      * @param a {string} первый операнд
      * @param b {string} второй операнд
-     * @returns {*} Результат сложения
+     * @returns {number} Результат сложения
      */
     function mod2_32(a, b) {
 
@@ -85,7 +124,7 @@ function classGost2814789(encryptionKey) {
      * @param string {string} Целевая строка
      * @param char {string} Символ, который следует дописывать
      * @param length {number} Длинна результирующей строки
-     * @returns {*} {string} Результирующая строка
+     * @returns {string} Результирующая строка
      */
     function padString(string, char, length) {
         while (string.length < length)
@@ -107,9 +146,7 @@ function classGost2814789(encryptionKey) {
 
         }).split('').reverse().map(function (item, i) {
 
-            // console.log(item + '|'+ i + '|'+exchangeTable[i][item]);
-
-            return exchangeTable[i][item];
+            return EXCHANGE_TABLE[i][item];
 
         }).reverse().join(''), 16);
 
@@ -127,3 +164,4 @@ function classGost2814789(encryptionKey) {
     }
 
 }
+
