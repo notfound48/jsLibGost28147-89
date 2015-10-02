@@ -1,11 +1,9 @@
-"use strict"
-
 /**
  * Класс реализует алгоритм блочного шифрования текста в формате unicode
  * по ГОСТ 28147-89 в режиме простой замены
  * @param {string} encryptionKey Ключ зашифрования/Расшифрования
  */
-function classGost2814789(encryptionKey) {
+function ClassGost2814789(encryptionKey) {
 
     if (encryptionKey.length != 8){
 
@@ -164,4 +162,3 @@ function classGost2814789(encryptionKey) {
     }
 
 }
-
